@@ -1,0 +1,400 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- 修改後的 viewport 元標籤 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>熊本計算機🐻</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <style>
+        /* 定義吉娃娃動畫 */
+        @keyframes moveChihuahua {
+            0% {
+                left: -100px;
+                top: 20px;
+                transform: scaleX(1);
+            }
+
+            50% {
+                left: calc(100% - 100px);
+                top: 20px;
+                transform: scaleX(-1);
+            }
+
+            100% {
+                left: -100px;
+                top: 20px;
+                transform: scaleX(1);
+            }
+        }
+
+        #chihuahua {
+            position: absolute;
+            width: 80px;
+            height: auto;
+            top: 10px;
+            /* 調整吉娃娃在頁面上的垂直位置 */
+            animation: moveChihuahua 10s linear infinite;
+            z-index: 10;
+            /* 確保吉娃娃在其他元素之上 */
+        }
+
+        /* 為輸入和結果顯示區添加淡入動畫 */
+        .fade-in {
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+        }
+
+        /* 調整頁面內容的上方留出空間，以免吉娃娃遮擋 */
+        .content {
+            padding-top: 100px;
+        }
+
+        /* 調整吉娃娃在不同螢幕尺寸下的大小 */
+        @media (max-width: 600px) {
+            #chihuahua {
+                width: 60px;
+            }
+        }
+
+        /* 其他樣式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f0f4f8;
+            position: relative;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .calculator {
+            background-color: #ffffff;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 5;
+            /* 確保計算器在吉娃娃之上 */
+        }
+
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        /* 輸入顯示區 */
+        #input {
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+            font-size: 1.2em;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            text-align: right;
+        }
+
+        /* 錯誤訊息 */
+        #error-message {
+            color: red;
+            font-size: 1em;
+            height: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        /* 按鈕區（5列） */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .button-grid button {
+            font-size: 1.2em;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        /* 清除按鈕 */
+        .button-grid button.clear {
+            font-size: 1em;
+            background-color: #bdc3c7;
+            color: #ffffff;
+        }
+
+        /* 確認按鈕 */
+        .button-grid button.confirm {
+            background-color: #2c3e50;
+            color: #ffffff;
+        }
+
+        /* 按鈕懸停效果 */
+        .button-grid button:hover {
+            background-color: #d0d7de;
+        }
+
+        /* 清除按鈕懸停 */
+        .button-grid button.clear:hover {
+            background-color: #a0a5aa;
+        }
+
+        /* 確認按鈕懸停 */
+        .button-grid button.confirm:hover {
+            background-color: #1a252f;
+        }
+
+        /* 第五列：刪除按鈕 */
+        .delete-button {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .delete-button button {
+            font-size: 1.2em;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #95a5a6;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .delete-button button:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* 結果顯示區 */
+        #result {
+            font-size: 1.2em;
+            color: #2c3e50;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 吉娃娃圖片 -->
+    <img id="chihuahua" src="chihuahua.png" alt="吉娃娃">
+
+    <div class="content">
+        <div class="calculator">
+            <!-- 標題與小櫻花圖案 -->
+            <h1>
+                熊本計算機
+                <span style="font-size:0.8em;">🐻</span>
+            </h1>
+
+            <!-- 輸入顯示區 -->
+            <div style="margin-bottom: 10px; position: relative;">
+                <span id="input" class="fade-in"
+                    style="display: inline-block; width: 100%; padding: 10px; font-size: 1.2em; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; text-align: right;">0</span>
+            </div>
+
+            <!-- 錯誤訊息區 -->
+            <div id="error-message" class="fade-in"
+                style="color: red; font-size: 1em; height: 1.2em; margin-bottom: 10px;"></div>
+
+            <!-- 按鈕區（5列） -->
+            <div class="button-grid">
+                <!-- 第一列 -->
+                <button onclick="appendNumber(1)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">1</button>
+                <button onclick="appendNumber(2)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">2</button>
+                <button onclick="appendNumber(3)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">3</button>
+
+                <!-- 第二列 -->
+                <button onclick="appendNumber(4)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">4</button>
+                <button onclick="appendNumber(5)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">5</button>
+                <button onclick="appendNumber(6)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">6</button>
+
+                <!-- 第三列 -->
+                <button onclick="appendNumber(7)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">7</button>
+                <button onclick="appendNumber(8)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">8</button>
+                <button onclick="appendNumber(9)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">9</button>
+
+                <!-- 第四列 -->
+                <button onclick="clearInput()"
+                    style="font-size: 1em; padding: 15px; border: none; border-radius: 8px; background-color: #bdc3c7; color: #ffffff; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#a0a5aa';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#bdc3c7';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#bdc3c7';"
+                    onmouseover="this.style.backgroundColor='#a0a5aa';"
+                    onmouseout="this.style.backgroundColor='#bdc3c7';">清除</button>
+                <button onclick="appendNumber(0)"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #ecf0f1; color: #2c3e50; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#d0d7de';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#ecf0f1';"
+                    onmouseover="this.style.backgroundColor='#d0d7de';"
+                    onmouseout="this.style.backgroundColor='#ecf0f1';">0</button>
+                <button onclick="calculate()"
+                    style="font-size: 1.2em; padding: 15px; border: none; border-radius: 8px; background-color: #2c3e50; color: #ffffff; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#1a252f';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#2c3e50';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#2c3e50';"
+                    onmouseover="this.style.backgroundColor='#1a252f';"
+                    onmouseout="this.style.backgroundColor='#2c3e50';">確認</button>
+            </div>
+
+            <!-- 第五列：刪除按鈕 -->
+            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <button onclick="deleteLast()"
+                    style="font-size: 1.2em; width: 100%; padding: 15px; border: none; border-radius: 8px; background-color: #95a5a6; color: #ffffff; cursor: pointer; transition: background-color 0.3s, transform 0.1s;"
+                    onmousedown="this.style.transform='scale(0.95)'; this.style.backgroundColor='#7f8c8d';"
+                    onmouseup="this.style.transform='scale(1)'; this.style.backgroundColor='#95a5a6';"
+                    onmouseleave="this.style.transform='scale(1)'; this.style.backgroundColor='#95a5a6';"
+                    onmouseover="this.style.backgroundColor='#7f8c8d';"
+                    onmouseout="this.style.backgroundColor='#95a5a6';">刪除</button>
+            </div>
+
+            <!-- 結果顯示區 -->
+            <div id="result" class="fade-in visible"
+                style="font-size: 1.2em; color: #2c3e50; opacity: 1; transition: opacity 0.5s;">
+                總計是 <span id="total" style="font-weight: bold;">0.00</span> 元(台)。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var input = '';
+
+        function appendNumber(num) {
+            if (input === '0') {
+                input = num.toString();
+            } else {
+                input += num;
+            }
+            document.getElementById('input').textContent = input;
+            fadeIn(document.getElementById('input'));
+        }
+
+        function clearInput() {
+            input = '';
+            document.getElementById('input').textContent = '0';
+            document.getElementById('total').textContent = '0.00';
+            document.getElementById('error-message').textContent = "";
+            fadeIn(document.getElementById('input'));
+            fadeIn(document.getElementById('total'));
+        }
+
+        function deleteLast() {
+            if (input.length > 0) {
+                input = input.slice(0, -1);
+                if (input === '') {
+                    input = '0';
+                }
+                document.getElementById('input').textContent = input;
+                fadeIn(document.getElementById('input'));
+            }
+        }
+
+        function calculate() {
+            var hamNum = parseInt(input);
+            if (isNaN(hamNum)) {
+                document.getElementById('error-message').textContent = "請輸入有效的數字";
+                fadeIn(document.getElementById('error-message'));
+                return;
+            }
+            var rate = 0.22;
+            var total = (hamNum * rate).toFixed(2);
+            document.getElementById('total').textContent = total;
+            document.getElementById('error-message').textContent = "";
+            fadeIn(document.getElementById('total'));
+        }
+
+        // 初始化顯示
+        document.getElementById('input').textContent = '0';
+        document.getElementById('input').style.opacity = '1';
+        document.getElementById('result').style.opacity = '1';
+
+        // 函數：淡入效果
+        function fadeIn(element) {
+            element.classList.remove('visible');
+            void element.offsetWidth; // 觸發重新渲染
+            element.classList.add('visible');
+        }
+    </script>
+</body>
+
+</html>
