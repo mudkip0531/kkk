@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="zh-Hant">
 
 <head>
     <meta charset="UTF-8">
@@ -73,14 +73,10 @@
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
             text-size-adjust: 100%;
-        }
-
-        .content {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            padding: 20px;
         }
 
         .calculator {
@@ -143,6 +139,7 @@
             touch-action: manipulation;
             -webkit-user-select: none;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* 清除按鈕 */
@@ -188,51 +185,49 @@
     <!-- 吉娃娃圖片 -->
     <img id="chihuahua" src="chihuahua.png" alt="吉娃娃">
 
-    <div class="content">
-        <div class="calculator">
-            <!-- 標題與小熊圖案 -->
-            <h1>
-                熊本計算機
-                <span style="font-size:0.8em;">🐻</span>
-            </h1>
+    <div class="calculator">
+        <!-- 標題與小熊圖案 -->
+        <h1>
+            熊本計算機
+            <span style="font-size:0.8em;">🐻</span>
+        </h1>
 
-            <!-- 輸入顯示區 -->
-            <div style="margin-bottom: 10px; position: relative;">
-                <span id="input" class="fade-in"
-                    style="display: inline-block; width: 100%; padding: 10px; font-size: 1.2em; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; text-align: right;">0</span>
-            </div>
+        <!-- 輸入顯示區 -->
+        <div style="margin-bottom: 10px; position: relative;">
+            <span id="input" class="fade-in"
+                style="display: inline-block; width: 100%; padding: 10px; font-size: 1.2em; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; text-align: right;">0</span>
+        </div>
 
-            <!-- 錯誤訊息區 -->
-            <div id="error-message" class="fade-in"
-                style="color: red; font-size: 1em; height: 1.2em; margin-bottom: 10px;"></div>
+        <!-- 錯誤訊息區 -->
+        <div id="error-message" class="fade-in" style="color: red; font-size: 1em; height: 1.2em; margin-bottom: 10px;">
+        </div>
 
-            <!-- 按鈕區（4列） -->
-            <div class="button-grid">
-                <!-- 第一列 -->
-                <button onclick="appendNumber(1)">1</button>
-                <button onclick="appendNumber(2)">2</button>
-                <button onclick="appendNumber(3)">3</button>
+        <!-- 按鈕區（4列） -->
+        <div class="button-grid">
+            <!-- 第一列 -->
+            <button onclick="appendNumber(1)">1</button>
+            <button onclick="appendNumber(2)">2</button>
+            <button onclick="appendNumber(3)">3</button>
 
-                <!-- 第二列 -->
-                <button onclick="appendNumber(4)">4</button>
-                <button onclick="appendNumber(5)">5</button>
-                <button onclick="appendNumber(6)">6</button>
+            <!-- 第二列 -->
+            <button onclick="appendNumber(4)">4</button>
+            <button onclick="appendNumber(5)">5</button>
+            <button onclick="appendNumber(6)">6</button>
 
-                <!-- 第三列 -->
-                <button onclick="appendNumber(7)">7</button>
-                <button onclick="appendNumber(8)">8</button>
-                <button onclick="appendNumber(9)">9</button>
+            <!-- 第三列 -->
+            <button onclick="appendNumber(7)">7</button>
+            <button onclick="appendNumber(8)">8</button>
+            <button onclick="appendNumber(9)">9</button>
 
-                <!-- 第四列 -->
-                <button onclick="clearInput()" class="ac">AC</button>
-                <button onclick="appendNumber(0)">0</button>
-                <button onclick="deleteLast()" class="clear">清除</button>
-            </div>
+            <!-- 第四列 -->
+            <button onclick="clearInput()" class="ac">AC</button>
+            <button onclick="appendNumber(0)">0</button>
+            <button onclick="deleteLast()" class="clear">清除</button>
+        </div>
 
-            <!-- 結果顯示區 -->
-            <div id="result" class="fade-in visible">
-                總計是 <span id="total" style="font-weight: bold;">0.00</span> 元(台)。
-            </div>
+        <!-- 結果顯示區 -->
+        <div id="result" class="fade-in visible">
+            總計是 <span id="total" style="font-weight: bold;">0.00</span> 元(台)。
         </div>
     </div>
 
@@ -300,16 +295,8 @@
             element.classList.add('visible');
         }
 
-        // 防止 iPhone 雙擊放大的進一步優化
-        // 禁用雙擊事件
-        var lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
-            var now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
+        // 移除防止雙擊放大的JavaScript代碼
+        // 這樣可以確保按鈕能夠正確識別快速點擊
     </script>
 </body>
 
