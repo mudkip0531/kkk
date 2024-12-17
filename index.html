@@ -9,36 +9,52 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
     <style>
-        /* 定義吉娃娃動畫 */
-        @keyframes moveChihuahua {
-            0% {
-                left: -100px;
-                top: 20px;
-                transform: scaleX(1);
-            }
+        /* 吉娃娃容器 */
+        #chihuahua-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            /* 允許換行 */
+            gap: 10px;
+            z-index: 10;
+            pointer-events: none;
+            /* 讓吉娃娃不會阻礙按鈕點擊 */
+        }
 
-            50% {
-                left: calc(100% - 100px);
-                top: 20px;
-                transform: scaleX(-1);
-            }
+        /* 吉娃娃圖片的基本樣式 */
+        .chihuahua {
+            width: 60px;
+            height: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInBounce 0.8s forwards;
+        }
 
-            100% {
-                left: -100px;
-                top: 20px;
-                transform: scaleX(1);
+        /* 隨螢幕尺寸調整吉娃娃大小 */
+        @media (min-width: 600px) {
+            .chihuahua {
+                width: 80px;
             }
         }
 
-        #chihuahua {
-            position: absolute;
-            width: 80px;
-            height: auto;
-            top: 10px;
-            /* 調整吉娃娃在頁面上的垂直位置 */
-            animation: moveChihuahua 10s linear infinite;
-            z-index: 10;
-            /* 確保吉娃娃在其他元素之上 */
+        /* 定義淡入彈跳動畫 */
+        @keyframes fadeInBounce {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* 為輸入和結果顯示區添加淡入動畫 */
@@ -49,18 +65,6 @@
 
         .fade-in.visible {
             opacity: 1;
-        }
-
-        /* 調整頁面內容的上方留出空間，以免吉娃娃遮擋 */
-        .content {
-            padding-top: 100px;
-        }
-
-        /* 調整吉娃娃在不同螢幕尺寸下的大小 */
-        @media (max-width: 600px) {
-            #chihuahua {
-                width: 60px;
-            }
         }
 
         /* 其他樣式 */
@@ -77,6 +81,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
+            /* 防止吉娃娃超出視窗 */
         }
 
         .calculator {
@@ -182,10 +188,10 @@
 </head>
 
 <body>
-    <!-- 吉娃娃圖片 -->
-    <img id="chihuahua" src="chihuahua.png" alt="吉娃娃">
+    <!-- 吉娃娃容器 -->
+    <div id="chihuahua-container"></div>
 
-    <div class="calculator">
+    <div class="calculator" id="calculator">
         <!-- 標題與小熊圖案 -->
         <h1>
             熊本計算機
@@ -194,35 +200,33 @@
 
         <!-- 輸入顯示區 -->
         <div style="margin-bottom: 10px; position: relative;">
-            <span id="input" class="fade-in"
-                style="display: inline-block; width: 100%; padding: 10px; font-size: 1.2em; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; text-align: right;">0</span>
+            <span id="input" class="fade-in visible">0</span>
         </div>
 
         <!-- 錯誤訊息區 -->
-        <div id="error-message" class="fade-in" style="color: red; font-size: 1em; height: 1.2em; margin-bottom: 10px;">
-        </div>
+        <div id="error-message" class="fade-in"></div>
 
         <!-- 按鈕區（4列） -->
         <div class="button-grid">
             <!-- 第一列 -->
-            <button onclick="appendNumber(1)">1</button>
-            <button onclick="appendNumber(2)">2</button>
-            <button onclick="appendNumber(3)">3</button>
+            <button onclick="appendNumber(1)" aria-label="數字1">1</button>
+            <button onclick="appendNumber(2)" aria-label="數字2">2</button>
+            <button onclick="appendNumber(3)" aria-label="數字3">3</button>
 
             <!-- 第二列 -->
-            <button onclick="appendNumber(4)">4</button>
-            <button onclick="appendNumber(5)">5</button>
-            <button onclick="appendNumber(6)">6</button>
+            <button onclick="appendNumber(4)" aria-label="數字4">4</button>
+            <button onclick="appendNumber(5)" aria-label="數字5">5</button>
+            <button onclick="appendNumber(6)" aria-label="數字6">6</button>
 
             <!-- 第三列 -->
-            <button onclick="appendNumber(7)">7</button>
-            <button onclick="appendNumber(8)">8</button>
-            <button onclick="appendNumber(9)">9</button>
+            <button onclick="appendNumber(7)" aria-label="數字7">7</button>
+            <button onclick="appendNumber(8)" aria-label="數字8">8</button>
+            <button onclick="appendNumber(9)" aria-label="數字9">9</button>
 
             <!-- 第四列 -->
-            <button onclick="clearInput()" class="ac">AC</button>
-            <button onclick="appendNumber(0)">0</button>
-            <button onclick="deleteLast()" class="clear">清除</button>
+            <button onclick="clearInput()" class="ac" aria-label="全部清除">AC</button>
+            <button onclick="appendNumber(0)" aria-label="數字0">0</button>
+            <button onclick="deleteLast()" class="clear" aria-label="清除最後一位">清除</button>
         </div>
 
         <!-- 結果顯示區 -->
@@ -240,7 +244,8 @@
             } else {
                 input += num;
             }
-            document.getElementById('input').textContent = input;
+            updateInputDisplay();
+            updateChihuahua();
             calculate(); // 實時計算
             fadeIn(document.getElementById('input'));
         }
@@ -250,6 +255,7 @@
             document.getElementById('input').textContent = '0';
             document.getElementById('total').textContent = '0.00';
             document.getElementById('error-message').textContent = "";
+            updateChihuahua();
             calculate(); // 實時計算
             fadeIn(document.getElementById('input'));
             fadeIn(document.getElementById('total'));
@@ -261,10 +267,15 @@
                 if (input === '') {
                     input = '0';
                 }
-                document.getElementById('input').textContent = input;
+                updateInputDisplay();
+                updateChihuahua();
                 calculate(); // 實時計算
                 fadeIn(document.getElementById('input'));
             }
+        }
+
+        function updateInputDisplay() {
+            document.getElementById('input').textContent = input;
         }
 
         function calculate() {
@@ -283,20 +294,56 @@
             fadeIn(document.getElementById('total'));
         }
 
-        // 初始化顯示
-        document.getElementById('input').textContent = '0';
-        document.getElementById('input').style.opacity = '1';
-        document.getElementById('result').style.opacity = '1';
-
         // 函數：淡入效果
         function fadeIn(element) {
-            element.classList.remove('visible');
-            void element.offsetWidth; // 觸發重新渲染
             element.classList.add('visible');
         }
 
-        // 移除防止雙擊放大的JavaScript代碼
-        // 這樣可以確保按鈕能夠正確識別快速點擊
+        // 增加觸摸友好性：防止按鈕點擊延遲
+        // 將點擊事件轉換為觸摸事件以提升響應速度
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                button.style.transform = 'scale(0.95)';
+            });
+
+            button.addEventListener('touchend', () => {
+                button.style.transform = 'scale(1)';
+            });
+        });
+
+        // 吉娃娃動態顯示控制
+        const chihuahuaContainer = document.getElementById('chihuahua-container');
+
+        function updateChihuahua() {
+            // 清空現有的吉娃娃
+            chihuahuaContainer.innerHTML = '';
+
+            // 確定要顯示多少隻吉娃娃
+            var numChihuahuas = input.length > 0 ? input.length : 1;
+
+            // 限制最大顯示數量（可根據需求調整）
+            numChihuahuas = Math.min(numChihuahuas, 20); // 將最大數量從10改為20
+
+            for (let i = 0; i < numChihuahuas; i++) {
+                const img = document.createElement('img');
+                img.src = 'chihuahua.png'; // 確保您有一張名為chihuahua.png的圖片，並放置在相同目錄下
+                img.alt = '吉娃娃';
+                img.classList.add('chihuahua');
+
+                // 添加隨機動畫延遲，使每隻吉娃娃的動畫不完全同步
+                const delay = Math.random() * 0.5; // 0到0.5秒之間的隨機延遲
+                img.style.animationDelay = `${delay}s`;
+
+                chihuahuaContainer.appendChild(img);
+            }
+        }
+
+        // 初始化顯示
+        document.getElementById('input').textContent = '0';
+        document.getElementById('result').classList.add('visible');
+
+        // 初始顯示一隻吉娃娃
+        updateChihuahua();
     </script>
 </body>
 
