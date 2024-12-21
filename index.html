@@ -57,32 +57,18 @@
             }
         }
 
-        /* 為輸入和結果顯示區添加淡入動畫 */
-        .fade-in {
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-        }
-
         /* 其他樣式 */
         body {
             margin: 0;
             padding: 0;
             font-family: 'Noto Sans JP', sans-serif;
             background-color: #f0f4f8;
-            position: relative;
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-            text-size-adjust: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            /* 防止吉娃娃超出視窗 */
+            color: #333333;
         }
 
         .calculator {
@@ -124,7 +110,15 @@
             margin-bottom: 10px;
         }
 
-        /* 按鈕區（4列） */
+        /* 結果顯示區 */
+        #result {
+            font-size: 1.2em;
+            color: #2c3e50;
+            transition: opacity 0.5s;
+            margin-bottom: 10px;
+        }
+
+        /* 數字鍵盤模式 */
         .button-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -141,48 +135,165 @@
             color: #2c3e50;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.1s;
-            /* 防止iOS雙擊放大 */
             touch-action: manipulation;
             -webkit-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 清除按鈕 */
-        .button-grid button.clear {
-            font-size: 1em;
-            background-color: #bdc3c7;
-            color: #ffffff;
-        }
-
-        /* AC 按鈕 */
-        .button-grid button.ac {
+        .button-grid .ac {
             background-color: #e74c3c;
             /* 紅色 */
             color: #ffffff;
         }
 
-        /* 按鈕懸停效果 */
+        .button-grid .clear {
+            font-size: 1em;
+            background-color: #bdc3c7;
+            color: #ffffff;
+        }
+
         .button-grid button:hover {
             background-color: #d0d7de;
         }
 
-        /* 清除按鈕懸停 */
-        .button-grid button.clear:hover {
-            background-color: #a0a5aa;
-        }
-
-        /* AC 按鈕懸停 */
-        .button-grid button.ac:hover {
+        .button-grid .ac:hover {
             background-color: #c0392b;
         }
 
-        /* 結果顯示區 */
-        #result {
+        .button-grid .clear:hover {
+            background-color: #a0a5aa;
+        }
+
+        /* 折扣模式 (1~9折、無折扣、返回) */
+        .discount-grid {
+            display: none;
+            /* 初始隱藏 */
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* 打折按鈕：日系淡綠藍 */
+        .discount-grid button {
             font-size: 1.2em;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #c8e1e2;
             color: #2c3e50;
-            opacity: 1;
-            transition: opacity 0.5s;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .discount-grid button:hover {
+            background-color: #b1d3d4;
+        }
+
+        /* 無折扣按鈕 - 灰色 */
+        .discount-grid .no-discount {
+            background-color: #bdc3c7;
+            color: #ffffff;
+        }
+
+        .discount-grid .no-discount:hover {
+            background-color: #a0a5aa;
+        }
+
+        /* 返回按鈕 - 灰紅色 */
+        .discount-grid .back-btn {
+            background-color: #aebdbe;
+            color: #2c3e50;
+        }
+
+        .discount-grid .back-btn:hover {
+            background-color: #98a7a8;
+        }
+
+        /* 打折後金額顯示區 */
+        #discounted-result {
+            border: 1px solid #ccc;
+            margin-top: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            display: none;
+            text-align: left;
+        }
+
+        #discounted-result .discounted-total {
+            color: #e74c3c;
+            /* 紅色 */
+            font-weight: bold;
+        }
+
+        #discounted-result div {
+            margin-bottom: 5px;
+        }
+
+        /* 數字鍵盤下方: 打折 / 無折扣 按鈕 (並排) */
+        #digit-extra-btns {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        /* 打折按鈕 */
+        #digit-extra-btns .btn-discount {
+            background-color: #a3d6c6;
+            color: #2c3e50;
+            border-radius: 8px;
+            padding: 10px 20px;
+            border: none;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        #digit-extra-btns .btn-discount:hover {
+            background-color: #89cbb2;
+        }
+
+        /* 無折扣(數字介面下, 改成灰色系) */
+        #digit-extra-btns .no-discount {
+            background-color: #bdc3c7;
+            color: #ffffff;
+        }
+
+        #digit-extra-btns .no-discount:hover {
+            background-color: #a0a5aa;
+        }
+
+        /* 響應式 */
+        @media (max-width: 400px) {
+            .calculator {
+                padding: 20px;
+            }
+
+            .button-grid button,
+            .discount-grid button {
+                padding: 15px;
+                font-size: 1.1em;
+            }
+
+            #input {
+                padding: 12px;
+                font-size: 1.2em;
+            }
+
+            #result {
+                font-size: 1.2em;
+            }
+
+            #digit-extra-btns button {
+                padding: 8px 15px;
+                font-size: 1em;
+            }
         }
     </style>
 </head>
@@ -191,11 +302,9 @@
     <!-- 吉娃娃容器 -->
     <div id="chihuahua-container"></div>
 
-    <div class="calculator" id="calculator">
-        <!-- 標題與小熊圖案 -->
+    <div class="calculator">
         <h1>
-            熊本計算機
-            <span style="font-size:0.8em;">🐻</span>
+            熊本計算機 <span style="font-size:0.8em;">🐻</span>
         </h1>
 
         <!-- 輸入顯示區 -->
@@ -206,38 +315,98 @@
         <!-- 錯誤訊息區 -->
         <div id="error-message" class="fade-in"></div>
 
-        <!-- 按鈕區（4列） -->
-        <div class="button-grid">
+        <!-- 數字模式(預設顯示) -->
+        <div class="button-grid" id="digit-mode">
             <!-- 第一列 -->
-            <button onclick="appendNumber(1)" aria-label="數字1">1</button>
-            <button onclick="appendNumber(2)" aria-label="數字2">2</button>
-            <button onclick="appendNumber(3)" aria-label="數字3">3</button>
+            <button onclick="appendNumber(1)">1</button>
+            <button onclick="appendNumber(2)">2</button>
+            <button onclick="appendNumber(3)">3</button>
 
             <!-- 第二列 -->
-            <button onclick="appendNumber(4)" aria-label="數字4">4</button>
-            <button onclick="appendNumber(5)" aria-label="數字5">5</button>
-            <button onclick="appendNumber(6)" aria-label="數字6">6</button>
+            <button onclick="appendNumber(4)">4</button>
+            <button onclick="appendNumber(5)">5</button>
+            <button onclick="appendNumber(6)">6</button>
 
             <!-- 第三列 -->
-            <button onclick="appendNumber(7)" aria-label="數字7">7</button>
-            <button onclick="appendNumber(8)" aria-label="數字8">8</button>
-            <button onclick="appendNumber(9)" aria-label="數字9">9</button>
+            <button onclick="appendNumber(7)">7</button>
+            <button onclick="appendNumber(8)">8</button>
+            <button onclick="appendNumber(9)">9</button>
 
             <!-- 第四列 -->
-            <button onclick="clearInput()" class="ac" aria-label="全部清除">AC</button>
-            <button onclick="appendNumber(0)" aria-label="數字0">0</button>
-            <button onclick="deleteLast()" class="clear" aria-label="清除最後一位">清除</button>
+            <button class="ac" onclick="clearInput()">AC</button>
+            <button onclick="appendNumber(0)">0</button>
+            <button class="clear" onclick="deleteLast()">清除</button>
+        </div>
+
+        <!-- 打折模式(隱藏) -->
+        <div class="discount-grid" id="discount-mode">
+            <!-- 第一列 -->
+            <button onclick="applyDiscount(0.1)">1折</button>
+            <button onclick="applyDiscount(0.2)">2折</button>
+            <button onclick="applyDiscount(0.3)">3折</button>
+
+            <!-- 第二列 -->
+            <button onclick="applyDiscount(0.4)">4折</button>
+            <button onclick="applyDiscount(0.5)">5折</button>
+            <button onclick="applyDiscount(0.6)">6折</button>
+
+            <!-- 第三列 -->
+            <button onclick="applyDiscount(0.7)">7折</button>
+            <button onclick="applyDiscount(0.8)">8折</button>
+            <button onclick="applyDiscount(0.9)">9折</button>
+
+            <!-- 第四列: 無折扣 & 返回 -->
+            <button class="no-discount" onclick="removeDiscount()">無折扣</button>
+            <!-- 用 visibility:hidden 來做佔位，保持三格對齊 -->
+            <button style="visibility:hidden;"></button>
+            <button class="back-btn" onclick="toggleMode()">返回</button>
         </div>
 
         <!-- 結果顯示區 -->
         <div id="result" class="fade-in visible">
             總計是 <span id="total" style="font-weight: bold;">0.00</span> 元(台)。
         </div>
+
+        <!-- 打折後金額顯示區 -->
+        <div id="discounted-result">
+            <div>
+                打折後是 <span id="discounted-total" class="discounted-total">0.00</span> 元(台)。 (打了<span
+                    id="applied-discount">0折</span>)
+            </div>
+            <div>
+                打折後是 <span id="discounted-original" class="discounted-total">0.00</span> (日)。
+            </div>
+        </div>
+
+        <!-- 數字模式下：打折 & 無折扣 按鈕 (並排) -->
+        <div id="digit-extra-btns" style="margin-top:10px;">
+            <!-- 打折按鈕 (去除灰色, 改成日系淡綠) -->
+            <button class="btn-discount" onclick="toggleMode()">打折</button>
+            <!-- 無折扣改成灰色 -->
+            <button class="no-discount" onclick="removeDiscount()">無折扣</button>
+        </div>
     </div>
 
     <script>
-        var input = '';
+        var input = '0';             // 使用者當前輸入
+        var discountRate = 0;        // 折扣率(0~1之間)
 
+        // 切換模式(數字<->打折)
+        function toggleMode() {
+            var digitMode = document.getElementById('digit-mode');
+            var discountMode = document.getElementById('discount-mode');
+            if (digitMode.style.display === 'none') {
+                // 從打折模式 -> 數字模式
+                digitMode.style.display = 'grid';
+                discountMode.style.display = 'none';
+            } else {
+                // 從數字模式 -> 打折模式
+                digitMode.style.display = 'none';
+                discountMode.style.display = 'grid';
+            }
+        }
+
+        // 追加數字
         function appendNumber(num) {
             if (input === '0') {
                 input = num.toString();
@@ -245,105 +414,118 @@
                 input += num;
             }
             updateInputDisplay();
-            updateChihuahua();
-            calculate(); // 實時計算
-            fadeIn(document.getElementById('input'));
+            updateChihuahua(); // 變更吉娃娃
+            calculate();
         }
 
+        // AC - 全部清除
         function clearInput() {
-            input = '';
+            input = '0';
             document.getElementById('input').textContent = '0';
             document.getElementById('total').textContent = '0.00';
             document.getElementById('error-message').textContent = "";
-            updateChihuahua();
-            calculate(); // 實時計算
-            fadeIn(document.getElementById('input'));
-            fadeIn(document.getElementById('total'));
+            // 重置折扣
+            discountRate = 0;
+            document.getElementById('discounted-result').style.display = 'none';
+            document.getElementById('discounted-total').textContent = '0.00';
+            document.getElementById('discounted-original').textContent = '0.00';
+            document.getElementById('applied-discount').textContent = '0折';
+
+            updateChihuahua(); // 變更吉娃娃
+            calculate();
         }
 
+        // 清除 - 刪除最後一位
         function deleteLast() {
-            if (input.length > 0) {
+            if (input.length > 1) {
                 input = input.slice(0, -1);
-                if (input === '') {
-                    input = '0';
-                }
-                updateInputDisplay();
-                updateChihuahua();
-                calculate(); // 實時計算
-                fadeIn(document.getElementById('input'));
+            } else {
+                input = '0';
             }
+            updateInputDisplay();
+            updateChihuahua(); // 變更吉娃娃
+            calculate();
         }
 
+        // 顯示當前輸入
         function updateInputDisplay() {
             document.getElementById('input').textContent = input;
         }
 
+        // 打折功能(1~9折)
+        function applyDiscount(rate) {
+            discountRate = rate;
+            calculate();
+        }
+
+        // 無折扣
+        function removeDiscount() {
+            discountRate = 0;
+            document.getElementById('discounted-result').style.display = 'none';
+            calculate();
+        }
+
+        // 計算
         function calculate() {
             var hamNum = parseInt(input);
             if (isNaN(hamNum)) {
                 document.getElementById('error-message').textContent = "請輸入有效的數字";
                 document.getElementById('total').textContent = '0.00';
-                fadeIn(document.getElementById('error-message'));
-                fadeIn(document.getElementById('total'));
+                document.getElementById('discounted-result').style.display = 'none';
                 return;
             }
+            document.getElementById('error-message').textContent = "";
+
+            // 原總額(台幣)
             var rate = 0.22;
             var total = (hamNum * rate).toFixed(2);
             document.getElementById('total').textContent = total;
-            document.getElementById('error-message').textContent = "";
-            fadeIn(document.getElementById('total'));
+
+            // 若有折扣
+            if (discountRate > 0) {
+                var discountedTotal = (total * discountRate).toFixed(2);
+                document.getElementById('discounted-total').textContent = discountedTotal;
+                document.getElementById('applied-discount').textContent = (discountRate * 10) + '折';
+
+                // 原始輸入(hamNum)打折 => (日)
+                var discountedOriginal = (hamNum * discountRate).toFixed(2);
+                document.getElementById('discounted-original').textContent = discountedOriginal;
+                document.getElementById('discounted-result').style.display = 'block';
+            } else {
+                document.getElementById('discounted-result').style.display = 'none';
+            }
         }
 
-        // 函數：淡入效果
-        function fadeIn(element) {
-            element.classList.add('visible');
-        }
-
-        // 增加觸摸友好性：防止按鈕點擊延遲
-        // 將點擊事件轉換為觸摸事件以提升響應速度
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('touchstart', () => {
-                button.style.transform = 'scale(0.95)';
-            });
-
-            button.addEventListener('touchend', () => {
-                button.style.transform = 'scale(1)';
-            });
-        });
-
-        // 吉娃娃動態顯示控制
-        const chihuahuaContainer = document.getElementById('chihuahua-container');
-
+        // ********** 以下為吉娃娃功能 ***********
+        // 自動根據 input 長度 或 數值 來增加(或減少) 吉娃娃
         function updateChihuahua() {
-            // 清空現有的吉娃娃
+            const chihuahuaContainer = document.getElementById('chihuahua-container');
+            // 先清空
             chihuahuaContainer.innerHTML = '';
 
-            // 確定要顯示多少隻吉娃娃
+            // 顯示多少隻
             var numChihuahuas = input.length > 0 ? input.length : 1;
-
-            // 限制最大顯示數量（可根據需求調整）
-            numChihuahuas = Math.min(numChihuahuas, 20); // 將最大數量從10改為20
+            // 最多20隻
+            numChihuahuas = Math.min(numChihuahuas, 20);
 
             for (let i = 0; i < numChihuahuas; i++) {
                 const img = document.createElement('img');
-                img.src = 'chihuahua.png'; // 確保您有一張名為chihuahua.png的圖片，並放置在相同目錄下
+                img.src = 'chihuahua.png'; // 請確保有 chihuahua.png 放在同層
                 img.alt = '吉娃娃';
                 img.classList.add('chihuahua');
 
-                // 添加隨機動畫延遲，使每隻吉娃娃的動畫不完全同步
-                const delay = Math.random() * 0.5; // 0到0.5秒之間的隨機延遲
+                // 隨機動畫延遲
+                const delay = Math.random() * 0.5;
                 img.style.animationDelay = `${delay}s`;
 
                 chihuahuaContainer.appendChild(img);
             }
         }
 
-        // 初始化顯示
+        // 初始化
         document.getElementById('input').textContent = '0';
-        document.getElementById('result').classList.add('visible');
-
-        // 初始顯示一隻吉娃娃
-        updateChihuahua();
+        document.getElementById('total').textContent = '0.00';
+        updateChihuahua(); // 初始顯示一隻吉娃娃
     </script>
 </body>
 
