@@ -9,7 +9,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
     <style>
-        /* 吉娃娃容器 */
+        /* --- 吉娃娃部分 --- */
         #chihuahua-container {
             position: absolute;
             top: 20px;
@@ -20,10 +20,9 @@
             gap: 10px;
             z-index: 10;
             pointer-events: none;
-            /* 讓吉娃娃不會阻礙按鈕點擊 */
+            /* 不阻礙按鈕點擊 */
         }
 
-        /* 吉娃娃圖片的基本樣式 */
         .chihuahua {
             width: 60px;
             height: auto;
@@ -32,14 +31,12 @@
             animation: fadeInBounce 0.8s forwards;
         }
 
-        /* 隨螢幕尺寸調整吉娃娃大小 */
         @media (min-width: 600px) {
             .chihuahua {
                 width: 80px;
             }
         }
 
-        /* 定義淡入彈跳動畫 */
         @keyframes fadeInBounce {
             0% {
                 opacity: 0;
@@ -57,7 +54,7 @@
             }
         }
 
-        /* 其他樣式 */
+        /* --- 其他樣式 --- */
         body {
             margin: 0;
             padding: 0;
@@ -118,7 +115,7 @@
             margin-bottom: 10px;
         }
 
-        /* 數字鍵盤模式 */
+        /* 數字模式(預設) */
         .button-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -165,7 +162,7 @@
             background-color: #a0a5aa;
         }
 
-        /* 折扣模式 (1~9折、無折扣、返回) */
+        /* 打折模式 (1~9折 + 無折扣 + AC + 返回) */
         .discount-grid {
             display: none;
             /* 初始隱藏 */
@@ -174,7 +171,7 @@
             margin-bottom: 20px;
         }
 
-        /* 打折按鈕：日系淡綠藍 */
+        /* 打折介面按鈕(1~9折): 淡綠藍 */
         .discount-grid button {
             font-size: 1.2em;
             padding: 15px;
@@ -194,7 +191,7 @@
             background-color: #b1d3d4;
         }
 
-        /* 無折扣按鈕 - 灰色 */
+        /* 無折扣: 灰色 */
         .discount-grid .no-discount {
             background-color: #bdc3c7;
             color: #ffffff;
@@ -204,7 +201,17 @@
             background-color: #a0a5aa;
         }
 
-        /* 返回按鈕 - 灰紅色 */
+        /* AC按鈕(在打折介面) - 紅色 */
+        .discount-grid .ac {
+            background-color: #e74c3c;
+            color: #ffffff;
+        }
+
+        .discount-grid .ac:hover {
+            background-color: #c0392b;
+        }
+
+        /* 返回按鈕 - 灰色 */
         .discount-grid .back-btn {
             background-color: #aebdbe;
             color: #2c3e50;
@@ -235,7 +242,7 @@
             margin-bottom: 5px;
         }
 
-        /* 數字鍵盤下方: 打折 / 無折扣 按鈕 (並排) */
+        /* 數字鍵盤下方: "打折" 按鈕 (已移除 "無折扣") */
         #digit-extra-btns {
             margin-top: 10px;
             display: flex;
@@ -243,7 +250,7 @@
             justify-content: center;
         }
 
-        /* 打折按鈕 */
+        /* 打折按鈕: 淡綠 */
         #digit-extra-btns .btn-discount {
             background-color: #a3d6c6;
             color: #2c3e50;
@@ -257,16 +264,6 @@
 
         #digit-extra-btns .btn-discount:hover {
             background-color: #89cbb2;
-        }
-
-        /* 無折扣(數字介面下, 改成灰色系) */
-        #digit-extra-btns .no-discount {
-            background-color: #bdc3c7;
-            color: #ffffff;
-        }
-
-        #digit-extra-btns .no-discount:hover {
-            background-color: #a0a5aa;
         }
 
         /* 響應式 */
@@ -292,7 +289,7 @@
 
             #digit-extra-btns button {
                 padding: 8px 15px;
-                font-size: 1em;
+                font-size: 0.95em;
             }
         }
     </style>
@@ -303,19 +300,16 @@
     <div id="chihuahua-container"></div>
 
     <div class="calculator">
-        <h1>
-            熊本計算機 <span style="font-size:0.8em;">🐻</span>
-        </h1>
+        <h1>熊本計算機 <span style="font-size:0.8em;">🐻</span></h1>
 
         <!-- 輸入顯示區 -->
         <div style="margin-bottom: 10px; position: relative;">
             <span id="input" class="fade-in visible">0</span>
         </div>
-
         <!-- 錯誤訊息區 -->
         <div id="error-message" class="fade-in"></div>
 
-        <!-- 數字模式(預設顯示) -->
+        <!-- 數字鍵盤模式 -->
         <div class="button-grid" id="digit-mode">
             <!-- 第一列 -->
             <button onclick="appendNumber(1)">1</button>
@@ -338,7 +332,7 @@
             <button class="clear" onclick="deleteLast()">清除</button>
         </div>
 
-        <!-- 打折模式(隱藏) -->
+        <!-- 打折模式 (1~9折, 無折扣, AC, 返回) -->
         <div class="discount-grid" id="discount-mode">
             <!-- 第一列 -->
             <button onclick="applyDiscount(0.1)">1折</button>
@@ -355,10 +349,9 @@
             <button onclick="applyDiscount(0.8)">8折</button>
             <button onclick="applyDiscount(0.9)">9折</button>
 
-            <!-- 第四列: 無折扣 & 返回 -->
+            <!-- 第四列: 無折扣, AC, 返回 -->
             <button class="no-discount" onclick="removeDiscount()">無折扣</button>
-            <!-- 用 visibility:hidden 來做佔位，保持三格對齊 -->
-            <button style="visibility:hidden;"></button>
+            <button class="ac" onclick="acAndBack()">AC</button>
             <button class="back-btn" onclick="toggleMode()">返回</button>
         </div>
 
@@ -378,35 +371,50 @@
             </div>
         </div>
 
-        <!-- 數字模式下：打折 & 無折扣 按鈕 (並排) -->
+        <!-- 數字鍵盤下方：打折 (已移除"無折扣"按鈕) -->
         <div id="digit-extra-btns" style="margin-top:10px;">
-            <!-- 打折按鈕 (去除灰色, 改成日系淡綠) -->
             <button class="btn-discount" onclick="toggleMode()">打折</button>
-            <!-- 無折扣改成灰色 -->
-            <button class="no-discount" onclick="removeDiscount()">無折扣</button>
         </div>
     </div>
 
     <script>
-        var input = '0';             // 使用者當前輸入
-        var discountRate = 0;        // 折扣率(0~1之間)
+        var input = '0';      // 使用者當前輸入
+        var discountRate = 0; // 折扣率(0~1)
 
-        // 切換模式(數字<->打折)
+        //=== 吉娃娃功能 ===
+        function updateChihuahua() {
+            const chihuahuaContainer = document.getElementById('chihuahua-container');
+            chihuahuaContainer.innerHTML = ''; // 清空
+            var numChihuahuas = Math.max(1, input.length);
+            numChihuahuas = Math.min(numChihuahuas, 20);
+
+            for (let i = 0; i < numChihuahuas; i++) {
+                const img = document.createElement('img');
+                img.src = 'chihuahua.png'; // 請確保與本檔同層
+                img.alt = '吉娃娃';
+                img.classList.add('chihuahua');
+                const delay = Math.random() * 0.5;
+                img.style.animationDelay = `${delay}s`;
+                chihuahuaContainer.appendChild(img);
+            }
+        }
+
+        //=== 切換模式 (數字 <-> 打折) ===
         function toggleMode() {
             var digitMode = document.getElementById('digit-mode');
             var discountMode = document.getElementById('discount-mode');
             if (digitMode.style.display === 'none') {
-                // 從打折模式 -> 數字模式
+                // 從打折 -> 數字
                 digitMode.style.display = 'grid';
                 discountMode.style.display = 'none';
             } else {
-                // 從數字模式 -> 打折模式
+                // 從數字 -> 打折
                 digitMode.style.display = 'none';
                 discountMode.style.display = 'grid';
             }
         }
 
-        // 追加數字
+        //=== 數字鍵盤 ===
         function appendNumber(num) {
             if (input === '0') {
                 input = num.toString();
@@ -414,11 +422,9 @@
                 input += num;
             }
             updateInputDisplay();
-            updateChihuahua(); // 變更吉娃娃
+            updateChihuahua();
             calculate();
         }
-
-        // AC - 全部清除
         function clearInput() {
             input = '0';
             document.getElementById('input').textContent = '0';
@@ -431,11 +437,9 @@
             document.getElementById('discounted-original').textContent = '0.00';
             document.getElementById('applied-discount').textContent = '0折';
 
-            updateChihuahua(); // 變更吉娃娃
+            updateChihuahua();
             calculate();
         }
-
-        // 清除 - 刪除最後一位
         function deleteLast() {
             if (input.length > 1) {
                 input = input.slice(0, -1);
@@ -443,29 +447,30 @@
                 input = '0';
             }
             updateInputDisplay();
-            updateChihuahua(); // 變更吉娃娃
+            updateChihuahua();
             calculate();
         }
 
-        // 顯示當前輸入
-        function updateInputDisplay() {
-            document.getElementById('input').textContent = input;
-        }
-
-        // 打折功能(1~9折)
+        //=== 打折模式 ===
         function applyDiscount(rate) {
             discountRate = rate;
             calculate();
         }
-
-        // 無折扣
         function removeDiscount() {
             discountRate = 0;
             document.getElementById('discounted-result').style.display = 'none';
             calculate();
         }
+        // 折扣介面AC鍵: 清空 + 返回數字鍵
+        function acAndBack() {
+            clearInput();
+            toggleMode(); // 回到數字模式
+        }
 
-        // 計算
+        //=== 計算 & 顯示 ===
+        function updateInputDisplay() {
+            document.getElementById('input').textContent = input;
+        }
         function calculate() {
             var hamNum = parseInt(input);
             if (isNaN(hamNum)) {
@@ -483,11 +488,12 @@
 
             // 若有折扣
             if (discountRate > 0) {
+                // 折扣後台幣
                 var discountedTotal = (total * discountRate).toFixed(2);
                 document.getElementById('discounted-total').textContent = discountedTotal;
                 document.getElementById('applied-discount').textContent = (discountRate * 10) + '折';
 
-                // 原始輸入(hamNum)打折 => (日)
+                // 原始輸入 x 折扣 => 日
                 var discountedOriginal = (hamNum * discountRate).toFixed(2);
                 document.getElementById('discounted-original').textContent = discountedOriginal;
                 document.getElementById('discounted-result').style.display = 'block';
@@ -496,36 +502,10 @@
             }
         }
 
-        // ********** 以下為吉娃娃功能 ***********
-        // 自動根據 input 長度 或 數值 來增加(或減少) 吉娃娃
-        function updateChihuahua() {
-            const chihuahuaContainer = document.getElementById('chihuahua-container');
-            // 先清空
-            chihuahuaContainer.innerHTML = '';
-
-            // 顯示多少隻
-            var numChihuahuas = input.length > 0 ? input.length : 1;
-            // 最多20隻
-            numChihuahuas = Math.min(numChihuahuas, 20);
-
-            for (let i = 0; i < numChihuahuas; i++) {
-                const img = document.createElement('img');
-                img.src = 'chihuahua.png'; // 請確保有 chihuahua.png 放在同層
-                img.alt = '吉娃娃';
-                img.classList.add('chihuahua');
-
-                // 隨機動畫延遲
-                const delay = Math.random() * 0.5;
-                img.style.animationDelay = `${delay}s`;
-
-                chihuahuaContainer.appendChild(img);
-            }
-        }
-
-        // 初始化
+        //=== 初始化 ===
         document.getElementById('input').textContent = '0';
         document.getElementById('total').textContent = '0.00';
-        updateChihuahua(); // 初始顯示一隻吉娃娃
+        updateChihuahua(); // 初始顯示吉娃娃
     </script>
 </body>
 
