@@ -115,7 +115,7 @@
             margin-bottom: 10px;
         }
 
-        /* 數字模式(預設) */
+        /* 數字鍵盤模式 */
         .button-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -171,7 +171,7 @@
             margin-bottom: 20px;
         }
 
-        /* 打折介面按鈕(1~9折): 淡綠藍 */
+        /* 打折介面 1~9折按鈕 */
         .discount-grid button {
             font-size: 1.2em;
             padding: 15px;
@@ -191,7 +191,7 @@
             background-color: #b1d3d4;
         }
 
-        /* 無折扣: 灰色 */
+        /* 無折扣(灰色) */
         .discount-grid .no-discount {
             background-color: #bdc3c7;
             color: #ffffff;
@@ -201,7 +201,7 @@
             background-color: #a0a5aa;
         }
 
-        /* AC按鈕(在打折介面) - 紅色 */
+        /* AC(折扣介面) - 紅 */
         .discount-grid .ac {
             background-color: #e74c3c;
             color: #ffffff;
@@ -211,7 +211,7 @@
             background-color: #c0392b;
         }
 
-        /* 返回按鈕 - 灰色 */
+        /* 返回(灰紅) */
         .discount-grid .back-btn {
             background-color: #aebdbe;
             color: #2c3e50;
@@ -242,16 +242,14 @@
             margin-bottom: 5px;
         }
 
-        /* 數字鍵盤下方: "打折" 按鈕 (已移除 "無折扣") */
+        /* 數字鍵盤下方：只有「打折」按鈕，但按下後此按鈕要消失 */
         #digit-extra-btns {
             margin-top: 10px;
             display: flex;
-            gap: 10px;
             justify-content: center;
         }
 
-        /* 打折按鈕: 淡綠 */
-        #digit-extra-btns .btn-discount {
+        .btn-discount {
             background-color: #a3d6c6;
             color: #2c3e50;
             border-radius: 8px;
@@ -262,8 +260,13 @@
             transition: background-color 0.3s, transform 0.1s;
         }
 
-        #digit-extra-btns .btn-discount:hover {
+        .btn-discount:hover {
             background-color: #89cbb2;
+        }
+
+        /* 隱藏 .btn-discount 的 class (helper) */
+        .hidden {
+            display: none !important;
         }
 
         /* 響應式 */
@@ -287,7 +290,7 @@
                 font-size: 1.2em;
             }
 
-            #digit-extra-btns button {
+            .btn-discount {
                 padding: 8px 15px;
                 font-size: 0.95em;
             }
@@ -306,10 +309,11 @@
         <div style="margin-bottom: 10px; position: relative;">
             <span id="input" class="fade-in visible">0</span>
         </div>
+
         <!-- 錯誤訊息區 -->
         <div id="error-message" class="fade-in"></div>
 
-        <!-- 數字鍵盤模式 -->
+        <!-- 數字鍵盤模式 (預設) -->
         <div class="button-grid" id="digit-mode">
             <!-- 第一列 -->
             <button onclick="appendNumber(1)">1</button>
@@ -332,7 +336,7 @@
             <button class="clear" onclick="deleteLast()">清除</button>
         </div>
 
-        <!-- 打折模式 (1~9折, 無折扣, AC, 返回) -->
+        <!-- 打折模式 (1~9折 + 無折扣 + AC + 返回) -->
         <div class="discount-grid" id="discount-mode">
             <!-- 第一列 -->
             <button onclick="applyDiscount(0.1)">1折</button>
@@ -363,7 +367,7 @@
         <!-- 打折後金額顯示區 -->
         <div id="discounted-result">
             <div>
-                打折後是 <span id="discounted-total" class="discounted-total">0.00</span> 元(台)。 (打了<span
+                打折後是 <span id="discounted-total" class="discounted-total">0.00</span> 元(台)。(打了<span
                     id="applied-discount">0折</span>)
             </div>
             <div>
@@ -371,9 +375,9 @@
             </div>
         </div>
 
-        <!-- 數字鍵盤下方：打折 (已移除"無折扣"按鈕) -->
+        <!-- 數字鍵盤下方：只有「打折」按鈕，一旦進入折扣模式則隱藏此按鈕 -->
         <div id="digit-extra-btns" style="margin-top:10px;">
-            <button class="btn-discount" onclick="toggleMode()">打折</button>
+            <button class="btn-discount" id="toggle-discount-btn" onclick="toggleMode()">打折</button>
         </div>
     </div>
 
@@ -384,13 +388,13 @@
         //=== 吉娃娃功能 ===
         function updateChihuahua() {
             const chihuahuaContainer = document.getElementById('chihuahua-container');
-            chihuahuaContainer.innerHTML = ''; // 清空
+            chihuahuaContainer.innerHTML = '';
             var numChihuahuas = Math.max(1, input.length);
             numChihuahuas = Math.min(numChihuahuas, 20);
 
             for (let i = 0; i < numChihuahuas; i++) {
                 const img = document.createElement('img');
-                img.src = 'chihuahua.png'; // 請確保與本檔同層
+                img.src = 'chihuahua.png'; // 請確保檔案存在
                 img.alt = '吉娃娃';
                 img.classList.add('chihuahua');
                 const delay = Math.random() * 0.5;
@@ -399,22 +403,28 @@
             }
         }
 
-        //=== 切換模式 (數字 <-> 打折) ===
+        //=== 切換模式(數字 <-> 打折) ===
         function toggleMode() {
             var digitMode = document.getElementById('digit-mode');
             var discountMode = document.getElementById('discount-mode');
+            var toggleDiscountBtn = document.getElementById('toggle-discount-btn');
+
             if (digitMode.style.display === 'none') {
                 // 從打折 -> 數字
                 digitMode.style.display = 'grid';
                 discountMode.style.display = 'none';
+                // 顯示「打折」按鈕
+                toggleDiscountBtn.classList.remove('hidden');
             } else {
                 // 從數字 -> 打折
                 digitMode.style.display = 'none';
                 discountMode.style.display = 'grid';
+                // 隱藏「打折」按鈕
+                toggleDiscountBtn.classList.add('hidden');
             }
         }
 
-        //=== 數字鍵盤 ===
+        //=== 數字介面操作 ===
         function appendNumber(num) {
             if (input === '0') {
                 input = num.toString();
@@ -430,7 +440,6 @@
             document.getElementById('input').textContent = '0';
             document.getElementById('total').textContent = '0.00';
             document.getElementById('error-message').textContent = "";
-            // 重置折扣
             discountRate = 0;
             document.getElementById('discounted-result').style.display = 'none';
             document.getElementById('discounted-total').textContent = '0.00';
@@ -451,7 +460,7 @@
             calculate();
         }
 
-        //=== 打折模式 ===
+        //=== 打折介面 ===
         function applyDiscount(rate) {
             discountRate = rate;
             calculate();
@@ -461,10 +470,10 @@
             document.getElementById('discounted-result').style.display = 'none';
             calculate();
         }
-        // 折扣介面AC鍵: 清空 + 返回數字鍵
+        // AC + 返回
         function acAndBack() {
             clearInput();
-            toggleMode(); // 回到數字模式
+            toggleMode();
         }
 
         //=== 計算 & 顯示 ===
@@ -486,14 +495,12 @@
             var total = (hamNum * rate).toFixed(2);
             document.getElementById('total').textContent = total;
 
-            // 若有折扣
             if (discountRate > 0) {
-                // 折扣後台幣
                 var discountedTotal = (total * discountRate).toFixed(2);
                 document.getElementById('discounted-total').textContent = discountedTotal;
                 document.getElementById('applied-discount').textContent = (discountRate * 10) + '折';
 
-                // 原始輸入 x 折扣 => 日
+                // 原輸入 x 折扣 => (日)
                 var discountedOriginal = (hamNum * discountRate).toFixed(2);
                 document.getElementById('discounted-original').textContent = discountedOriginal;
                 document.getElementById('discounted-result').style.display = 'block';
